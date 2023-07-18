@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import com.example.punnetverse.adapters.TabsPagerAdapter
 import com.example.punnetverse.databinding.ActivityMainBinding
 import com.google.android.gms.ads.*
 import com.google.android.material.tabs.TabLayoutMediator
@@ -20,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Hide the status bar
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.primary_dark_color)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setUpViewPager()
         setContentView(binding.root)
