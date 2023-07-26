@@ -1,3 +1,9 @@
 package com.example.punnetverse.data
 
-data class Template (val Id: Int, val imgSource: Int, val videoUrl: String)
+data class Template (
+    val id: Long,
+    val captions: String,
+    val url: String,
+    val uploadDateAndTime: String,
+    val views: Long,
+)
