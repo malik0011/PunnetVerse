@@ -3,7 +3,6 @@ package com.example.punnetverse
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -21,51 +20,27 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Hide the status bar
+        //Hide the status bar
         window.statusBarColor = ContextCompat.getColor(this, R.color.primary_dark_color)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setUpViewPager()
         setContentView(binding.root)
-
         loadBannerAd()
     }
 
     private fun loadBannerAd() {
-        MobileAds.initialize(this) {}
-
+        MobileAds.initialize(this)
         mAdView = findViewById(R.id.adView)
         val adRequest = AdRequest.Builder().build()
         mAdView.loadAd(adRequest)
-
         mAdView.adListener = object: AdListener() {
             override fun onAdClicked() {
-                // Code to be executed when the user clicks on an ad.
-//                Toast.makeText(this@MainActivity,"AB TO TU GYA BETA!!",Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onAdClosed() {
-                // Code to be executed when the user is about to return
-                // to the app after tapping on an ad.
-            }
-
-            override fun onAdFailedToLoad(adError : LoadAdError) {
-                // Code to be executed when an ad request fails.
-                Toast.makeText(this@MainActivity,"ad failed to loaded: ",Toast.LENGTH_SHORT).show()
+                //to count ads click
+                Toast.makeText(this@MainActivity,"Opening web..",Toast.LENGTH_SHORT).show()
             }
 
             override fun onAdImpression() {
-                // Code to be executed when an impression is recorded
-                // for an ad.
-            }
-
-            override fun onAdLoaded() {
-                // Code to be executed when an ad finishes loading.
-//                Toast.makeText(this@MainActivity,"ad loaded",Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onAdOpened() {
-                // Code to be executed when an ad opens an overlay that
-                // covers the screen.
+                //needed to save record of impression
             }
         }
     }
