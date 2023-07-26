@@ -1,10 +1,20 @@
 package com.example.punnetverse.adapters
 
+import android.app.DownloadManager
+import android.content.Context
+import android.net.Uri
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.punnetverse.data.Template
 import com.example.punnetverse.databinding.ItemTemp2Binding
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.SimpleExoPlayer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class TemplateAdapter(private val mList: List<Template>) : RecyclerView.Adapter<TemplateAdapter.TempViewHolder>() {
 
@@ -23,10 +33,43 @@ class TemplateAdapter(private val mList: List<Template>) : RecyclerView.Adapter<
     }
 
     // Holds the views for adding it to image and text
-    inner class TempViewHolder(val binding: ItemTemp2Binding) : RecyclerView.ViewHolder(binding.root) {
+    inner class TempViewHolder(private val binding: ItemTemp2Binding) : RecyclerView.ViewHolder(binding.root) {
 
         fun setData(tempData: Template) {
-            binding.ivThumbnail.setImageResource(tempData.imgSource)
+            //download
+            binding.btnDownload.setOnClickListener {
+                Toast.makeText(binding.root.context, "Download will start shortly, check notification!", Toast.LENGTH_SHORT).show()
+                startDownload(tempData.url, binding.root.context, "punnet-meme-temp${Math.random()}")
+            }
+            //code for exoplayer
+            binding.caption.text = tempData.captions
+            val simpleExoPlayer = SimpleExoPlayer.Builder(binding.exoPlayerView.context).build()
+            binding.exoPlayerView.player = simpleExoPlayer
+            val mediaItem = MediaItem.fromUri(tempData.url)
+            simpleExoPlayer.addMediaItem(mediaItem)
+            simpleExoPlayer.prepare()
+            simpleExoPlayer.play()
+            simpleExoPlayer.pause()
+        }
+    }
+
+    private fun startDownload(url: String, context: Context, fileName: String) {
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val request = DownloadManager.Request(Uri.parse(url))
+                    .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                    .setAllowedOverRoaming(true)
+                    .setTitle(fileName)
+                    .setDescription("Downloading $fileName")
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                request.setMimeType("video/mp4")
+                request.setTitle("Downloading video...")
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "$fileName-video.mp4")
+                downloadManager.enqueue(request)
+            } catch (e: Exception) {
+                Toast.makeText(context, "Please try again!!", Toast.LENGTH_SHORT)
+            }
         }
     }
 }

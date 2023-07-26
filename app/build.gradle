@@ -14,6 +14,7 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+        multiDexEnabled = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -51,4 +52,22 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'com.google.android.gms:play-services-ads:22.2.0'
+    //multidex
+    implementation 'androidx.multidex:multidex:2.0.1'
+    //retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.7.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.6.0'
+    // dependency for exoplayer
+    implementation 'com.google.android.exoplayer:exoplayer:2.18.0'
+    // for core support in exoplayer.
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.19.0'
+    // for adding dash support in our exoplayer.
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.19.0'
+    // for adding hls support in exoplayer.
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.19.0'
+    // for smooth streaming of video in our exoplayer.
+    implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.19.0'
+    // for generating default ui of exoplayer
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.19.0'
 }

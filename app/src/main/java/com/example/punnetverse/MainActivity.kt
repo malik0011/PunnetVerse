@@ -3,7 +3,7 @@ package com.example.punnetverse
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onAdFailedToLoad(adError : LoadAdError) {
                 // Code to be executed when an ad request fails.
-                Toast.makeText(this@MainActivity,"ad failed to loaded",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity,"ad failed to loaded: ",Toast.LENGTH_SHORT).show()
             }
 
             override fun onAdImpression() {
