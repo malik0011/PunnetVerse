@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         mAdView.adListener = object: AdListener() {
             override fun onAdClicked() {
                 // Code to be executed when the user clicks on an ad.
-                Toast.makeText(this@MainActivity,"AB TO TU GYA BETA!!",Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this@MainActivity,"AB TO TU GYA BETA!!",Toast.LENGTH_SHORT).show()
             }
 
             override fun onAdClosed() {
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onAdLoaded() {
                 // Code to be executed when an ad finishes loading.
-                Toast.makeText(this@MainActivity,"ad loaded",Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this@MainActivity,"ad loaded",Toast.LENGTH_SHORT).show()
             }
 
             override fun onAdOpened() {
