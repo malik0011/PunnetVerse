@@ -1,6 +1,5 @@
 package com.example.punnetverse.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.punnetverse.api.MemeApiService
@@ -12,16 +11,27 @@ import retrofit2.Response
 
 class TemplatesViewModel: ViewModel() {
 
-    var tempList = MutableLiveData<List<Template>>()
+    var tempList = MutableLiveData<ArrayList<Template>>()
 
-    fun getMemeTemp() {
-        MemeApiService.memesInstance.getHomeMemeTemp().enqueue(object : Callback<HomePageResponse> {
+    fun getMemeTemp(pageNumber: Int) {
+        MemeApiService.memesInstance.getHomeMemeTemp(pageNumber, 5).enqueue(object : Callback<HomePageResponse> {
             override fun onResponse(call: Call<HomePageResponse>, response: Response<HomePageResponse>) {
-                tempList.postValue(response.body()?.videos as List<Template>?)
+                tempList.postValue(response.body()?.videos as ArrayList<Template>?)
             }
 
             override fun onFailure(call: Call<HomePageResponse>, t: Throwable) {
-                tempList.postValue(listOf())
+                tempList.postValue(arrayListOf())
+            }
+        })
+    }
+    fun getTrendingMemeTemp(pageNumber: Int) {
+        MemeApiService.memesInstance.getHomeMemeTemp(pageNumber, 5).enqueue(object : Callback<HomePageResponse> {
+            override fun onResponse(call: Call<HomePageResponse>, response: Response<HomePageResponse>) {
+                tempList.postValue(response.body()?.videos as ArrayList<Template>?)
+            }
+
+            override fun onFailure(call: Call<HomePageResponse>, t: Throwable) {
+                tempList.postValue(arrayListOf())
             }
         })
     }
@@ -29,11 +39,11 @@ class TemplatesViewModel: ViewModel() {
     fun getSearchTemp(caption: String) {
         MemeApiService.memesInstance.getSearchTemplates(caption, 0, 10).enqueue(object : Callback<HomePageResponse> {
             override fun onResponse(call: Call<HomePageResponse>, response: Response<HomePageResponse>) {
-                tempList.postValue(response.body()?.videos as List<Template>?)
+                tempList.postValue(response.body()?.videos as ArrayList<Template>?)
             }
 
             override fun onFailure(call: Call<HomePageResponse>, t: Throwable) {
-                tempList.postValue(listOf())
+                tempList.postValue(arrayListOf())
             }
         })
     }

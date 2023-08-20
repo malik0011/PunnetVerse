@@ -11,10 +11,17 @@ import com.example.punnetverse.databinding.ActivityMainBinding
 import com.google.android.gms.ads.*
 import com.google.android.material.tabs.TabLayoutMediator
 
+// Goals
+//1. Invoke addViews with video id endpoint after playing a video -> added
+//2. After search if user try to back it should navigate to home page rather than closing applications-> not required right now
+//3. load page size to 5 elements rather than 10 -> done
+//4. optimise video player -> in future
+//5. Memes tab should be renamed to Trending and load trendings endpoints Data - done
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val tabNames = listOf("Templates","Memes")
+    private val tabNames = listOf("Templates","Trending")
     lateinit var mAdView : AdView
 
     @RequiresApi(Build.VERSION_CODES.R)

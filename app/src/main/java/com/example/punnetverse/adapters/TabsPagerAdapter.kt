@@ -11,8 +11,8 @@ class TabsPagerAdapter (fragment: FragmentActivity) : FragmentStateAdapter(fragm
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> TemplatesFragment.newInstance("", "")
-            else -> MemeFragment.newInstance("","")
+            0 -> TemplatesFragment.newInstance(true, "")
+            else -> TemplatesFragment.newInstance(false, "")
         }
     }
 }
