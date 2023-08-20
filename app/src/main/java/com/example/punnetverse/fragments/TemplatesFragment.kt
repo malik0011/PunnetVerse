@@ -5,17 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.AbsListView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.punnetverse.adapters.TemplateAdapter
 import com.example.punnetverse.databinding.FragmentTemplatesBinding
 import com.example.punnetverse.viewmodel.TemplatesViewModel
+import kotlin.properties.Delegates
 
 class TemplatesFragment : Fragment() {
     private lateinit var binding: FragmentTemplatesBinding
     private lateinit var viewModel: TemplatesViewModel
+    private  var isTempFrag : Boolean = true
+    private var isScrolling = false
+    private var currItems by Delegates.notNull<Int>()
+    private var totalItems by Delegates.notNull<Int>()
+    private var scrollOutItems by Delegates.notNull<Int>()
+    private var currPageNumber = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,6 +34,7 @@ class TemplatesFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentTemplatesBinding.inflate(inflater)
         viewModel = ViewModelProvider(this)[(TemplatesViewModel::class.java)]
+        binding.collapsingToolbar.isVisible = isTempFrag
         setListener()
         initRecyclerView()
         setObserver()
@@ -45,19 +56,47 @@ class TemplatesFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
+        //init rcv
         binding.rcv.layoutManager = LinearLayoutManager(context)
-        viewModel.getMemeTemp()
+        binding.rcv.adapter = TemplateAdapter(arrayListOf())
+        //data fetching
+        if (isTempFrag) viewModel.getMemeTemp(currPageNumber++) else viewModel.getTrendingMemeTemp(currPageNumber++)
+        binding.rcv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                //scroll start
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL)  isScrolling = true
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                //scroll end
+                //getting all the position from rcv
+                currItems = (binding.rcv.layoutManager as LinearLayoutManager).childCount
+                totalItems = (binding.rcv.layoutManager as LinearLayoutManager).itemCount
+                scrollOutItems = (binding.rcv.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+
+                //pagination condition-> if currPosition is the last position the fetch data
+                if (isScrolling && (currItems + scrollOutItems == totalItems)) {
+                    isScrolling = false
+                    if (isTempFrag) viewModel.getMemeTemp(currPageNumber++) else viewModel.getTrendingMemeTemp(currPageNumber++)
+                }
+            }
+        })
     }
 
     private fun setObserver() {
         viewModel.tempList.observe(viewLifecycleOwner) {
-            if(it.isNotEmpty()) binding.rcv.adapter = TemplateAdapter(it)
-            else Toast.makeText(context, "Please try again after some time!", Toast.LENGTH_SHORT).show()
+            if(it.isNotEmpty()) (binding.rcv.adapter as TemplateAdapter).updateList(it)
+            else if(it.isEmpty() && binding.etSearch.text.isNotEmpty()) Toast.makeText(context, "Please try again after some time!", Toast.LENGTH_SHORT).show()
+            else Toast.makeText(context, "No more data right now!", Toast.LENGTH_SHORT).show()
         }
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(param1: String, param2: String) = TemplatesFragment()
+        fun newInstance(isTemplateFrag: Boolean, param2: String) = TemplatesFragment().apply {
+            isTempFrag = isTemplateFrag
+        }
     }
 }

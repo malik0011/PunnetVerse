@@ -8,15 +8,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.example.punnetverse.api.MemeApiService
 import com.example.punnetverse.data.Template
 import com.example.punnetverse.databinding.ItemTemp2Binding
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class TemplateAdapter(private val mList: List<Template>) : RecyclerView.Adapter<TemplateAdapter.TempViewHolder>() {
+class TemplateAdapter(private var mList: ArrayList<Template>) : RecyclerView.Adapter<TemplateAdapter.TempViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TempViewHolder {
         val binding = ItemTemp2Binding.inflate(LayoutInflater.from(parent.context))
@@ -39,7 +41,7 @@ class TemplateAdapter(private val mList: List<Template>) : RecyclerView.Adapter<
             //download
             binding.btnDownload.setOnClickListener {
                 Toast.makeText(binding.root.context, "Download will start shortly, check notification!", Toast.LENGTH_SHORT).show()
-                startDownload(tempData.url, binding.root.context, "punnet-meme-temp${Math.random()}")
+                startDownload( tempData.url, binding.root.context, "punnet-meme-temp${Math.random()}")
             }
             //code for exoplayer
             binding.caption.text = tempData.captions
@@ -50,7 +52,24 @@ class TemplateAdapter(private val mList: List<Template>) : RecyclerView.Adapter<
             simpleExoPlayer.prepare()
             simpleExoPlayer.play()
             simpleExoPlayer.pause()
+            var firstTimePlayed = true
+            simpleExoPlayer.addListener(object : Player.Listener {
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    super.onIsPlayingChanged(isPlaying)
+                    //if video is playing and this the first time
+                    // we are playing it the just take it as view count
+                    if(isPlaying && firstTimePlayed) {
+                        MemeApiService.memesInstance.addView(tempData.id)
+                        firstTimePlayed = false
+                    }
+                }
+            })
         }
+    }
+
+    fun updateList(list: ArrayList<Template>) {
+        mList.addAll(list)
+        notifyDataSetChanged()
     }
 
     private fun startDownload(url: String, context: Context, fileName: String) {
