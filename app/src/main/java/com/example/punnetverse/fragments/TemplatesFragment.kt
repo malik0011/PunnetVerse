@@ -26,6 +26,7 @@ class TemplatesFragment : Fragment() {
     private var totalItems by Delegates.notNull<Int>()
     private var scrollOutItems by Delegates.notNull<Int>()
     private var currPageNumber = 0
+    private var isSearchType = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,6 +46,7 @@ class TemplatesFragment : Fragment() {
         //searching
         binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                isSearchType = true
                 viewModel.getSearchTemp(binding.etSearch.text.toString())
             }
             true
@@ -87,7 +89,12 @@ class TemplatesFragment : Fragment() {
 
     private fun setObserver() {
         viewModel.tempList.observe(viewLifecycleOwner) {
-            if(it.isNotEmpty()) (binding.rcv.adapter as TemplateAdapter).updateList(it)
+            if(it.isNotEmpty()) {
+                if (isSearchType) { //if we search some thing then just load new list
+                    isSearchType = false
+                    binding.rcv.adapter = TemplateAdapter(it)
+                } else (binding.rcv.adapter as TemplateAdapter).updateList(it) //if we normal load data just add new data to the list
+            }
             else if(it.isEmpty() && binding.etSearch.text.isNotEmpty()) Toast.makeText(context, "Please try again after some time!", Toast.LENGTH_SHORT).show()
             else Toast.makeText(context, "No more data right now!", Toast.LENGTH_SHORT).show()
         }
