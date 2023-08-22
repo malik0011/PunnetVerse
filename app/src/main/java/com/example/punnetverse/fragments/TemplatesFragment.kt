@@ -96,7 +96,7 @@ class TemplatesFragment : Fragment() {
                 } else (binding.rcv.adapter as TemplateAdapter).updateList(it) //if we normal load data just add new data to the list
             }
             else if(it.isEmpty() && binding.etSearch.text.isNotEmpty()) Toast.makeText(context, "Please try again after some time!", Toast.LENGTH_SHORT).show()
-            else Toast.makeText(context, "No more data right now!", Toast.LENGTH_SHORT).show()
+
         }
     }
 
