@@ -1,13 +1,20 @@
 package com.example.punnetverse.adapters
 
+import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
+import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.punnetverse.R
 import com.example.punnetverse.api.MemeApiService
 import com.example.punnetverse.data.Template
 import com.example.punnetverse.databinding.ItemTemp2Binding
@@ -40,9 +47,22 @@ class TemplateAdapter(private var mList: ArrayList<Template>) : RecyclerView.Ada
         fun setData(tempData: Template) {
             //download
             binding.btnDownload.setOnClickListener {
-                Toast.makeText(binding.root.context, "Download will start shortly, check notification!", Toast.LENGTH_SHORT).show()
-                startDownload( tempData.url, binding.root.context, "punnet-meme-temp${Math.random()}")
+                //paying sound
+                MediaPlayer.create(binding.root.context, R.raw.puneet_sound).start()
+                Toast.makeText(binding.root.context, "Download will start shortly, check Download folder!", Toast.LENGTH_SHORT).show()
+
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && ContextCompat.checkSelfPermission(binding.root.context, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                    // If permission is not granted, request it
+                    ActivityCompat.requestPermissions(
+                        binding.root.context as Activity,
+                        arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 22)
+                } else {
+                    // Permission already granted
+                    // You can perform your download or other operations here
+                    startDownload( tempData.url, binding.root.context, "punnet-meme-temp${Math.random()}")
+                }
             }
+
             //code for exoplayer
             binding.caption.text = tempData.captions
             val simpleExoPlayer = SimpleExoPlayer.Builder(binding.exoPlayerView.context).build()
